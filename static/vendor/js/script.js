@@ -242,34 +242,67 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     function postData(form) {
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-            const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status');
-            statusMessage.textContent = message.loading;
-            form.append(statusMessage);
+        const statusMessage = document.createElement('div');
+        statusMessage.classList.add('status');
+        statusMessage.textContent = message.loading;
+        form.append(statusMessage);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'http://localhost:8000/');
+        const request = new XMLHttpRequest();
+        // Получаем CSRF-токен из метаданных формы
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-            request.setRequestHeader('Content-type', 'multipart/form-data');
-            const formData = new FormData(form);
+        request.open('POST', 'http://localhost:8000/food/');
 
-            request.send(formData);
+        // Добавляем CSRF-токен к заголовку запроса
+        request.setRequestHeader('X-CSRFToken', csrfToken);
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    statusMessage.textContent = message.success;
-                } else {
-                    statusMessage.textContent = message.failure;
-                }
-            });
+        const formData = new FormData(form);
 
+        request.send(formData);
 
+        request.addEventListener('load', () => {
+            if (request.status === 200) {
+                console.log(request.response);
+                statusMessage.textContent = message.success;
+            } else {
+                statusMessage.textContent = message.failure;
+            }
         });
-    }
+    });
+}
+
+    // function postData(form) {
+    //     form.addEventListener('submit', (e) => {
+    //         e.preventDefault();
+    //
+    //         const statusMessage = document.createElement('div');
+    //         statusMessage.classList.add('status');
+    //         statusMessage.textContent = message.loading;
+    //         form.append(statusMessage);
+    //
+    //         const request = new XMLHttpRequest();
+    //         request.open('POST', 'http://localhost:8000/food/');
+    //
+    //         request.setRequestHeader('Content-type', 'multipart/form-data');
+    //         const formData = new FormData(form);
+    //
+    //         request.send(formData);
+    //
+    //         request.addEventListener('load', () => {
+    //             if (request.status === 200) {
+    //                 console.log(request.response);
+    //                 statusMessage.textContent = message.success;
+    //             } else {
+    //                 statusMessage.textContent = message.failure;
+    //             }
+    //         });
+    //
+    //
+    //     });
+    // }
 
 
 });

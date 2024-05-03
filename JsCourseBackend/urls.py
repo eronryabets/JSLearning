@@ -1,6 +1,5 @@
-
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -10,7 +9,8 @@ from main.views import main
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', main, name='main'),
-    path('food', index, name='index'),
+    # path('food/', index, name='index'),
+    path('food/', include('food.urls', namespace='food')),
 ]
 
 if settings.DEBUG:

@@ -5,10 +5,12 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from food.views import index
+from main.views import main
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
+    path('', main, name='main'),
+    path('food', index, name='index'),
 ]
 
 if settings.DEBUG:

@@ -242,40 +242,49 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     function postData(form) {
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-        const statusMessage = document.createElement('div');
-        statusMessage.classList.add('status');
-        statusMessage.textContent = message.loading;
-        form.append(statusMessage);
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = message.loading;
+            form.append(statusMessage);
 
-        const request = new XMLHttpRequest();
-        // Получаем CSRF-токен из метаданных формы
-        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            const request = new XMLHttpRequest();
+            // Получаем CSRF-токен из метаданных формы
+            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
-        request.open('POST', 'http://localhost:8000/food/');
+            request.open('POST', 'http://localhost:8000/food/');
 
-        // Добавляем CSRF-токен к заголовку запроса
-        request.setRequestHeader('X-CSRFToken', csrfToken);
+            // Добавляем CSRF-токен к заголовку запроса
+            request.setRequestHeader('X-CSRFToken', csrfToken);
+            // Устанавливаем Content-type в application/json
+            // request.setRequestHeader('Content-type', 'application/json');
 
-        const formData = new FormData(form);
+            const formData = new FormData(form);
 
-        request.send(formData);
+            const object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
 
-        request.addEventListener('load', () => {
-            if (request.status === 200) {
-                console.log(`status : ${request.status}`);
-                statusMessage.textContent = message.success;
-                form.reset();
-                setTimeout(() => {
-                   statusMessage.remove();
-                }, 2000);
-            } else {
-                statusMessage.textContent = message.failure;
-            }
+            const json = JSON.stringify(object);
+            request.send(json);
+            // request.send(formData);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(`status : ${request.status}`);
+                    statusMessage.textContent = message.success;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = message.failure;
+                }
+            });
         });
-    });
-}
+    }
 
 });

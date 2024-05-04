@@ -265,8 +265,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
         request.addEventListener('load', () => {
             if (request.status === 200) {
-                console.log(request.response);
+                console.log(`status : ${request.status}`);
                 statusMessage.textContent = message.success;
+                form.reset();
+                setTimeout(() => {
+                   statusMessage.remove();
+                }, 2000);
             } else {
                 statusMessage.textContent = message.failure;
             }

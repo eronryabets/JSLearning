@@ -8,3 +8,4 @@ class PromoDayForm(forms.Form):
     phone = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'order__input',
         'placeholder': 'Enter phone'}))
+

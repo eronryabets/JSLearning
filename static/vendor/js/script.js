@@ -247,19 +247,11 @@ window.addEventListener('DOMContentLoaded', () => {
                 display: block;
                 margin: 0 auto;
             `;
-            // form.append(statusMessage);
+
             form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
             // Получаем CSRF-токен из метаданных формы
             const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-
-            request.open('POST', 'http://localhost:8000/food/');
-
-            // Добавляем CSRF-токен к заголовку запроса
-            request.setRequestHeader('X-CSRFToken', csrfToken);
-            // Устанавливаем Content-type в application/json
-            // request.setRequestHeader('Content-type', 'application/json');
 
             const formData = new FormData(form);
 
@@ -268,20 +260,23 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;
             });
 
-            const json = JSON.stringify(object);
-            request.send(json);
-            // request.send(formData);
+            fetch('http://localhost:8000/food/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(object)
 
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(`status : ${request.status}`);
-                    showThanksModal(message.success);
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(message.failure);
-                }
+            }).then(data => {
+                console.log(`data : ${data}`);
+                showThanksModal(message.success);
+                statusMessage.remove();
+            }).catch(()=>{
+                showThanksModal(message.failure);
+            }).finally(() => {
+                form.reset();
             });
+
         });
     }
 
@@ -302,13 +297,13 @@ window.addEventListener('DOMContentLoaded', () => {
         `;
 
         document.querySelector('.modal').append(thanksModal);
-        setTimeout(()=>{
-           thanksModal.remove();
-           prevModalDialog.classList.add('show');
-           prevModalDialog.classList.remove('hide');
-           closeModal();
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add('show');
+            prevModalDialog.classList.remove('hide');
+            closeModal();
         }, 4000);
-
     }
+
 
 });

@@ -226,6 +226,8 @@ window.addEventListener('DOMContentLoaded', () => {
     //Forms
 
     const forms = document.querySelectorAll('form');
+    // Получаем CSRF-токен из метаданных формы
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
     const message = {
         loading: '/media/img/form/spinner.svg',
@@ -234,10 +236,23 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -250,32 +265,23 @@ window.addEventListener('DOMContentLoaded', () => {
 
             form.insertAdjacentElement('afterend', statusMessage);
 
-            // Получаем CSRF-токен из метаданных формы
-            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+            // // Получаем CSRF-токен из метаданных формы
+            // const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
             const formData = new FormData(form);
 
-            const object = {};
-            formData.forEach(function (value, key) {
-                object[key] = value;
-            });
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            fetch('http://localhost:8000/food/', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify(object)
-
-            }).then(data => {
-                console.log(`data : ${data}`);
-                showThanksModal(message.success);
-                statusMessage.remove();
-            }).catch(()=>{
-                showThanksModal(message.failure);
-            }).finally(() => {
-                form.reset();
-            });
+            postData('http://localhost:8000/api/requests/', json)
+                .then(data => {
+                    console.log('Data:', JSON.stringify(data, null, 2));
+                    showThanksModal(message.success);
+                    statusMessage.remove();
+                }).catch(() => {
+                    showThanksModal(message.failure);
+                }).finally(() => {
+                    form.reset();
+                });
 
         });
     }
@@ -306,8 +312,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     fetch('http://localhost:8000/api/menu/') // /requests
-    .then(data => data.json())
-    .then(res => console.log(res))
+        .then(data => data.json())
+        .then(res => console.log(res))
 
 
 });

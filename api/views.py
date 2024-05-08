@@ -10,7 +10,7 @@ class MenuAPIView(APIView):
     def get(self, request, format=None):
         queryset = MenuItem.objects.all()
         serializer = MenuItemSerializer(queryset, many=True)
-        return Response({"menu": serializer.data})
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = MenuItemSerializer(data=request.data)
@@ -24,7 +24,7 @@ class UserRequestInfoAPIView(APIView):
     def get(self, request, format=None):
         queryset = UserRequestInfo.objects.all()
         serializer = UserRequestInfoSerializer(queryset, many=True)
-        return Response({"requests": serializer.data})
+        return Response(serializer.data)
 
     def post(self, request, format=None):
         serializer = UserRequestInfoSerializer(data=request.data)

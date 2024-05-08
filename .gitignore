@@ -3,6 +3,7 @@ venv/
 media/
 secret/
 logs/
+node_modules/
 *.env
 *.secret
 *.pyc

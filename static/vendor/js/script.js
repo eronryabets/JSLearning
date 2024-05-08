@@ -305,5 +305,9 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
+    fetch('http://localhost:8000/api/menu/') // /requests
+    .then(data => data.json())
+    .then(res => console.log(res))
+
 
 });

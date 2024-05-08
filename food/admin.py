@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from food.models import MenuItem, UserRequestInfo
+
+admin.site.register(MenuItem)
+admin.site.register(UserRequestInfo)

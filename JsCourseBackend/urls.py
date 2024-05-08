@@ -11,6 +11,7 @@ urlpatterns = [
     path('', main, name='main'),
     # path('food/', index, name='index'),
     path('food/', include('food.urls', namespace='food')),
+    path('api/', include('api.urls', namespace='api'))
 ]
 
 if settings.DEBUG:

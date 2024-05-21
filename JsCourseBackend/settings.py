@@ -132,7 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # LOGGING
 
-# LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'DEBUG'
 #
 # LOGGING = {
 #     'version': 1,
